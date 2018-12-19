@@ -22,7 +22,7 @@ class Train(object):
     def __init__(self, config):
         ##setting hyper-parameters
         self.batch_size = config.batch_size
-        self.epoches = config.epoches
+        self.epochs = config.epochs
         self.mu =  config.mu
         self.n_residue = config.n_residue
         self.n_skip = config.n_skip
@@ -30,6 +30,7 @@ class Train(object):
         self.n_repeat = config.n_repeat
         self.seq_size = config.seq_size
         self.use_gpu = config.use_gpu
+        self.input = config.input
         self.ctx = setting_ctx(self.use_gpu)
         self.build_model()
         
@@ -46,12 +47,12 @@ class Train(object):
         self.net.save_params(filename)
     
     def train(self):
-        fs, data = load_wav('parametric-2.wav')
+        fs, data = load_wav(self.input)
         g = data_generation(data,fs,mu=self.mu, seq_size=self.seq_size,ctx=self.ctx)
         
         loss_save = []
         best_loss = sys.maxsize
-        for epoch in trange(self.epoches):
+        for epoch in trange(self.epochs):
             loss = 0.0
             for _ in range(self.batch_size):
                 batch = next(g)
